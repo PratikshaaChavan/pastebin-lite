@@ -6,7 +6,6 @@ interface Paste {
   max_views: number;
 }
 
-// In-memory storage for demo
 const pastes: { [id: string]: Paste } = {};
 
 export async function POST(req: NextRequest) {
@@ -16,6 +15,6 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({
     id,
-    url: 'https://pastebin-litee-ten.vercel.app/p/' + id,
+    url: 'https://pastebin-litee-ten.vercel.app/p/' + id
   });
 }
