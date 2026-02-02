@@ -1,32 +1,14 @@
-﻿import type { NextApiRequest, NextApiResponse } from 'next'
-
-type Paste = {
-  content: string
-  ttl_seconds: number
-  max_views: number
-}
-
-const pastes: Record<string, Paste> = {}
-
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' })
+import { Redis } from '@upstash/redis';
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
+export default async function handler(req, res) {
+  if (req.method === 'POST') {
+    const { content } = req.body;
+    const id = Math.random().toString(36).substring(2, 10);
+    await redis.set(id, content);
+    return res.status(200).json({ id });
   }
-
-  const { content, ttl_seconds, max_views } = req.body
-
-  if (!content) {
-    return res.status(400).json({ error: 'Content required' })
-  }
-
-  const id = Math.random().toString(36).substring(2, 8)
-  pastes[id] = { content, ttl_seconds, max_views }
-
-  return res.status(200).json({
-    id,
-    url: https://pastebin-litee-ten.vercel.app/p/
-  })
+  res.status(405).json({ error: 'Method not allowed' });
 }
